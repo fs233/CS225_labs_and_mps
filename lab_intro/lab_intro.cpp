@@ -61,12 +61,19 @@ PNG grayscale(PNG image) {
  * @return The image with a spotlight.
  */
 PNG createSpotlight(PNG image, int centerX, int centerY) {
-
+  for (unsigned x = 0; x < image.width(); x++) {
+    for (unsigned y = 0; y < image.height(); y++) {
+      HSLAPixel & pixel = image.getPixel(x, y);
+      double d =sqrt((x-centerX)*(x-centerX)+(y-centerY)*(y-centerY));
+      if(d<=160){
+        pixel.l = (1-d*0.005)*pixel.l;
+      }else{
+        pixel.l=0.2*pixel.l;
+      }
+    }
+  }
   return image;
-  
 }
- 
-
 /**
  * Returns a image transformed to Illini colors.
  *
@@ -78,7 +85,16 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
-
+  for (unsigned x = 0; x < image.width(); x++) {
+    for (unsigned y = 0; y < image.height(); y++) {
+      HSLAPixel & pixel = image.getPixel(x, y);
+      if(abs(pixel.h-11) > abs(pixel.h-216)){
+        pixel.h = 216;
+      }else{
+        pixel.h = 11;
+      }
+    }
+  }
   return image;
 }
  
@@ -96,6 +112,22 @@ PNG illinify(PNG image) {
 * @return The watermarked image.
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
-
+  unsigned a = firstImage.height();
+  unsigned b = firstImage.width();
+  if(firstImage.height()>secondImage.height()){
+    a = secondImage.height();
+  }
+  if(firstImage.width()>secondImage.width()){
+    b = secondImage.width();
+  }
+  for (unsigned x = 0; x < b; x++) {
+    for (unsigned y = 0; y < a; y++) {
+      HSLAPixel & pixelsecond = secondImage.getPixel(x, y);
+      HSLAPixel & pixelfirst = firstImage.getPixel(x, y);
+      if(pixelsecond.l == 1){
+        pixelfirst.l = pixelfirst.l + 0.2;
+      }
+    }
+  }
   return firstImage;
 }
