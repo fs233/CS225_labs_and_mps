@@ -22,8 +22,9 @@ void Allocator::createLetterGroups()
 {
     // Make letters (A - Z lettergroups)
     alpha = new Letter[26];
-    for (int i = 0; i < 26; i++)
-        alpha[i].letter = 'A' + i;
+    for (int i = 0; i < 26; i++){
+         alpha[i].letter = 'A' + i;
+    }
 }
 
 void Allocator::loadStudents(const std::string& file)
@@ -31,7 +32,6 @@ void Allocator::loadStudents(const std::string& file)
     // Read in students
     fileio::loadStudents(file);
     studentCount = fileio::getNumStudents();
-
     for (int i = 0; i < studentCount; i++) {
         std::string name = fileio::nextStudent();
         char letter = name[0];
@@ -44,14 +44,14 @@ void Allocator::loadRooms(const std::string& file)
 {
     // Read in rooms
     fileio::loadRooms(file);
+    roomCount = fileio::getNumRooms();
     rooms = new Room[roomCount];
-
     totalCapacity = 0;
     int i = 0;
     while (fileio::areMoreRooms()) {
-        i++; 
         rooms[i] = fileio::nextRoom();
         totalCapacity += rooms[i].capacity;
+        i++;
     }
 }
 
@@ -59,6 +59,7 @@ void Allocator::loadRooms(const std::string& file)
 void Allocator::printStudents(std::ostream & stream /* = std::cout */)
 {
     // Output number of each last letter name
+    studentCount = fileio::getNumStudents();
     stream << "Student counts (" << studentCount << " total)" << std::endl;
     for (int i = 0; i < 26; i++)
         stream << alpha[i].letter << ": " << alpha[i].count << std::endl;
@@ -117,4 +118,9 @@ Room* Allocator::largestOpening()
         }
     }
     return &rooms[index];
+}
+
+Allocator::~Allocator(){
+    delete [] alpha;
+    delete [] rooms;
 }

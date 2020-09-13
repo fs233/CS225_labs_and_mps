@@ -85,6 +85,7 @@ class Room
      * @param stream The stream to print to
      */
     void print(std::ostream& stream = std::cout);
+  
 
   private:
     /**
