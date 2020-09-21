@@ -10,11 +10,6 @@ StickerSheet::StickerSheet (const Image &picture, unsigned max){
   y = new unsigned[max];
   sticker = new Image* [max];
   sticker_count = 0;
-  for (unsigned i = 0; i < max; i++) {
-    sticker[i] = NULL;
-    x[i] = 0;
-    y[i] = 0;
-  }
 }
 
 void StickerSheet::copy(const StickerSheet &other){
@@ -58,51 +53,59 @@ const StickerSheet& StickerSheet::operator=(const StickerSheet & other){
   return *this;
 }
 
-
-
 void StickerSheet::changeMaxStickers (unsigned max){
-  if(max==sticker_max){
-    return;
-  }
-  Image** tempsticker = new Image*[max];
-  unsigned* tempx = new unsigned[max];
-  unsigned* tempy = new unsigned[max];
-  for (unsigned i = 0; i < max; i++) {
+  Image ** tempsticker = new Image * [sticker_count];
+  unsigned * tempx = new unsigned [sticker_count];
+  unsigned * tempy = new unsigned [sticker_count];
+  for (unsigned i = 0; i < sticker_count; i++) {
     tempsticker[i] = sticker[i];
     tempx[i] = x[i];
     tempy[i] = y[i];
   }
-  if(max>sticker_max){
-    for(unsigned i = sticker_max; i < max; i++){
+  delete[] sticker;
+  delete[] x;
+  delete[] y;
+  sticker = new Image * [max];
+  x = new unsigned[max];
+  y = new unsigned[max];
+  if (max < sticker_count) {
+    for (unsigned i = 0; i < max; i++) {
+      sticker[i] = tempsticker[i];
+      x[i] = tempx[i];
+      y[i] = tempy[i];
+    }
+    for (unsigned i = max; i < sticker_count; i++) {
+      delete tempsticker[i];
       tempsticker[i] = NULL;
-      x[i] = 0;
-      y[i] = 0;
+    }
+    sticker_count = max;
+  }else {
+    for (unsigned i = 0; i < sticker_count; i++) {
+      sticker[i] = tempsticker[i];
+      x[i] = tempx[i];
+      y[i] = tempy[i];
     }
   }
-  sticker = tempsticker;
-  x = tempx;
-  y = tempy;
   sticker_max = max;
   delete[] tempsticker;
   delete[] tempx;
   delete[] tempy;
 }
-  
+
 int StickerSheet::addSticker (Image &stickers, unsigned X, unsigned Y){
-  for(unsigned i = 0; i<sticker_max; i++){
-    if(sticker[i]==NULL){
-      sticker[i] = new Image(stickers);
-      x[i] = X;
-      y[i] = Y;
+  if(sticker_count < sticker_max){
+      sticker[sticker_count] = new Image(stickers);
+      x[sticker_count] = X;
+      y[sticker_count] = Y;
       sticker_count++;
-      return int(i);
-    }
+      return int(sticker_count-1);
+  }else{
+    return -1;
   }
-  return -1;
 }
 
 bool StickerSheet::translate (unsigned index, unsigned X, unsigned Y){
-  if(sticker[index] != NULL){
+  if(index < sticker_count){
     x[index] = X;
     y[index] = Y;
     return true;
@@ -111,59 +114,50 @@ bool StickerSheet::translate (unsigned index, unsigned X, unsigned Y){
 }
 
 void StickerSheet::removeSticker (unsigned index){
-  if(sticker[index] == NULL){
-    return;
-  }
   delete sticker[index];
   sticker[index] = NULL;
   x[index] = 0;
   y[index] = 0;
   sticker_count--;
+  for(unsigned i = index; i < sticker_max-1; i++){
+    sticker[i] = sticker[i+1];
+    x[i] = x[i+1];
+    y[i] = y[i+1];
+  }
+  sticker[sticker_max-1] = NULL;
+  x[sticker_max-1] = 0;
+  y[sticker_max-1] = 0;
 }
 
 Image * StickerSheet::getSticker (unsigned index){
-  if(sticker[index] == NULL){
+  if(index>=sticker_count){
     return NULL;
   }
   return sticker[index];
 }
 
 Image StickerSheet::render () const{
-  Image *output = new Image(*basepicture);
-  for (unsigned i = 0; i < sticker_max; i++) {
-    if(sticker[i] != NULL){
-    unsigned width = output->width();
-    unsigned height = output->height();
-    std::cout<<"139"<<std::endl;
+  Image output = Image(*basepicture);
+  for (unsigned i = 0; i < sticker_count; i++) {
+    unsigned width = output.width();
+    unsigned height = output.height();
 		unsigned sticker_width = sticker[i]->width();
-		std::cout<<"141"<<std::endl;
 		unsigned sticker_height = sticker[i]->height();
-		std::cout<<"142"<<std::endl;
     if(x[i]+sticker_width > width){
-      output->resize(x[i]+sticker_width, height);
+      output.resize(x[i]+sticker_width, height);
     }
     if(y[i]+sticker_height > height){
-      output->resize(width, y[i]+sticker_height);
+      output.resize(width, y[i]+sticker_height);
     }
-    }
-    continue;
-  }
-  for (unsigned i = 0; i < sticker_max; i++) { 
-    if(sticker[i] == NULL){
-      continue;
-    }
-    Image s = *sticker[i];
-    unsigned sticker_width = s.width();
-		unsigned sticker_height = s.height();
-    for(unsigned j = x[i]; j<x[i]+sticker_width; j++){
-      for(unsigned k = y[i]; k< y[i]+sticker_height; k++){
-        cs225::HSLAPixel & output_pixel = output->getPixel(j, k);
-			  cs225::HSLAPixel & sticker_pixel = s.getPixel(j-x[i], k-y[i]);
-        if(output_pixel.a != 0){
+    for(unsigned j = 0; j<sticker_width; j++){
+      for(unsigned k = 0; k< sticker_height; k++){
+        cs225::HSLAPixel & output_pixel = output.getPixel(x[i]+j, y[i]+k);
+			  cs225::HSLAPixel & sticker_pixel = sticker[i]->getPixel(j, k);
+        if(sticker_pixel.a != 0){
           output_pixel = sticker_pixel;
         }
       }
     }
   }
-  return *output;
+  return output;
 }

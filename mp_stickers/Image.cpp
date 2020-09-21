@@ -159,7 +159,7 @@ void Image::scale(double factor){
       }
     }
   }
-    
+    delete png;
 }
 void Image::scale(unsigned w, unsigned h){
   double wid = (double)this->width();
