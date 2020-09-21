@@ -78,14 +78,11 @@ void Flower::draw(PNG* canvas) const
         drawPetals(canvas, pistil->center(), x, y);
     }
 }
-void Flower::clear()
+
+Flower::~Flower()
 {
     delete stem;
     delete pistil;
     delete leaf;
-}
-Flower::~Flower()
-{
-    clear();
 }
 

@@ -82,7 +82,15 @@ Truck::Truck(const Truck& other)
 
 Truck::~Truck()
 {
-    clear();
+  delete trailer;
+  delete cabin;
+  delete window;
+  delete engine;
+  for (int i = 0; i < NUM_WHEELS; i++) {
+    delete wheels[i];
+    wheels[i] = NULL;
+  }
+  delete[] wheels;
 }
 
 Truck& Truck::operator=(const Truck& rhs)
@@ -126,18 +134,7 @@ void Truck::copy(const Truck& other)
     engine = new Rectangle(*(other.engine));
 }
 
-void Truck::clear()
-{
-    for (int i = 0; i < NUM_WHEELS; i++) {
-        delete wheels[i];
-        wheels[i] = NULL;
-    }
-    delete[] wheels;
-    delete trailer;
-    delete cabin;
-    delete window;
-    delete engine;
-}
+
 void Truck::draw(cs225::PNG* canvas) const{
     trailer->draw(canvas);
     cabin->draw(canvas);
@@ -147,4 +144,16 @@ void Truck::draw(cs225::PNG* canvas) const{
         (*wheels[i]).draw(canvas);
     }
     
+}
+void Truck::clear(){
+  delete trailer;
+  delete cabin;
+  delete window;
+  delete engine;
+  for (int i = 0; i < NUM_WHEELS; i++) {
+    delete wheels[i];
+    wheels[i] = NULL;
+  }
+  delete[] wheels;
+
 }
