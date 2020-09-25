@@ -27,14 +27,21 @@ namespace QuackFun {
  *          stack in the same state (unchanged).
  */
 template <typename T>
-T sum(stack<T>& s)
-{
+T sum(stack<T>& s){
+  if(s.empty()){
+    return T();
+  }
+    T add = s.top();
+    s.pop();
+    T summ = add + sum(s);
+    s.push(add);
+    return summ;
+}
 
     // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    //return T(); // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
-}
 
 /**
  * Checks whether the given string (stored in a queue) has balanced brackets.
@@ -54,11 +61,33 @@ T sum(stack<T>& s)
  * @return      Whether the input string had balanced brackets
  */
 bool isBalanced(queue<char> input)
-{
-
-    // @TODO: Make less optimistic
+{ 
+  stack<char> s;
+  if(input.empty()){
     return true;
+  }
+  unsigned num = input.size();
+  for(unsigned i = 0; i < num; i++){
+    char temp = input.front();
+    input.pop();
+    if(temp == '['){
+      s.push('[');
+    }
+    if(temp == ']'){
+      if(s.size()==0){
+        return false;
+      }else{
+        s.pop();
+      }
+    }
+  }
+  if(s.size()==0){
+    return true;
+  }
+  return false;
 }
+    
+    // @TODO: Make less optimistic
 
 /**
  * Reverses even sized blocks of items in the queue. Blocks start at size
@@ -76,11 +105,40 @@ bool isBalanced(queue<char> input)
  * @param q A queue of items to be scrambled
  */
 template <typename T>
-void scramble(queue<T>& q)
-{
+void scramble(queue<T>& q){
+    if(q.empty()){
+      return;
+    }
     stack<T> s;
-    // optional: queue<T> q2;
-
-    // Your code here
-}
+    queue<T> q2;
+    for(int i = 1; ;i++){
+      unsigned count = i;
+      if(q.size()<count){
+          count = q.size();
+        }
+      if(i%2==1){
+        for(unsigned j = 0; j < count; j++){
+          T temp = q.front();
+          q.pop();
+          q2.push(temp);
+        }
+      }else{
+        for(unsigned j = 0; j < count; j++){
+          T temp = q.front();
+          q.pop();
+          s.push(temp);
+        }
+        unsigned num = s.size();
+        for(unsigned j = 0; j < num; j++){
+          T temp = s.top();
+          s.pop();
+          q2.push(temp);
+        }
+       }
+      if(q.empty()){
+        q=q2;
+        return;
+      }
+    }
+  }
 }
