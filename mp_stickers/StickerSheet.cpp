@@ -124,6 +124,11 @@ void StickerSheet::removeSticker (unsigned index){
     x[i] = x[i+1];
     y[i] = y[i+1];
   }
+
+    sticker[sticker_max-1] = NULL;
+    x[sticker_max-1] = 0;
+    y[sticker_max-1] = 0;
+
 }
 
 Image * StickerSheet::getSticker (unsigned index){
