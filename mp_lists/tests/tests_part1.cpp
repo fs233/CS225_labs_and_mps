@@ -69,9 +69,7 @@ TEST_CASE("List::triplerotate simple", "[weight=10][part=1][valgrind]") {
 
     for (int i = 1; i <= 6; i++)
         list.insertBack(i);
-
     list.tripleRotate();
-
     stringstream s;
 
     list.print(s);
@@ -81,13 +79,12 @@ TEST_CASE("List::triplerotate simple", "[weight=10][part=1][valgrind]") {
 
 TEST_CASE("List::split simple", "[weight=5][part=1][valgrind]") {
     List<int> list;
-
     list.insertBack(1);
     list.insertBack(2);
     list.insertBack(3);
     list.insertBack(4);
-
     List<int> slist = list.split(2);
+
     stringstream s1, s2;
 
     list.print(s1);

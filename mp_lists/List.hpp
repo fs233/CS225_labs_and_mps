@@ -6,8 +6,9 @@
 template <class T>
 List<T>::List() { 
   // @TODO: graded in MP3.1
-    ListNode* head_ = NULL;
-    ListNode* tail_ = NULL;
+    head_ = NULL;
+    tail_ = NULL;
+    length_ = 0;
 }
 
 /**
@@ -17,7 +18,7 @@ List<T>::List() {
 template <typename T>
 typename List<T>::ListIterator List<T>::begin() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(NULL);
+  return List<T>::ListIterator(head_);
 }
 
 /**
@@ -26,7 +27,7 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(NULL);
+  return List<T>::ListIterator(tail_->next);
 }
 
 
@@ -36,7 +37,17 @@ typename List<T>::ListIterator List<T>::end() const {
  */
 template <typename T>
 void List<T>::_destroy() {
-  /// @todo Graded in MP3.1
+  /*ListNode* temp = head_;
+  while(temp !=NULL){
+    ListNode * nhead = temp;
+    temp = nhead->next;
+    delete nhead;
+  }*/
+  while(head_ != NULL){
+    ListNode* nhead = head_ ->next;
+    delete head_;
+    head_ = nhead;
+  }
 }
 
 /**
@@ -49,19 +60,15 @@ template <typename T>
 void List<T>::insertFront(T const & ndata) {
   /// @todo Graded in MP3.1
   ListNode * newNode = new ListNode(ndata);
-  newNode -> next = head_;
-  newNode -> prev = NULL;
-  
-  if (head_ != NULL) {
-    head_ -> prev = newNode;
-  }
-  if (tail_ == NULL) {
+  if(length_ == 0){
+    head_ = newNode;
     tail_ = newNode;
+  }else{
+    head_ ->prev = newNode;
+    newNode ->next = head_;
+    head_ = newNode;
   }
-  
-
   length_++;
-
 }
 
 /**
@@ -73,6 +80,16 @@ void List<T>::insertFront(T const & ndata) {
 template <typename T>
 void List<T>::insertBack(const T & ndata) {
   /// @todo Graded in MP3.1
+  ListNode * newBack = new ListNode(ndata);
+  if(length_ == 0){
+    head_ = newBack;
+    tail_ = newBack;
+  }else{
+    newBack ->prev = tail_; 
+    tail_ ->next = newBack;
+    tail_ = newBack;
+  }
+  length_++;
 }
 
 /**
@@ -91,20 +108,22 @@ void List<T>::insertBack(const T & ndata) {
  * @param splitPoint The number of steps to walk before splitting.
  * @return The starting node of the sequence that was split off.
  */
+
 template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
+  if(start == NULL){
+    return NULL;
+  } 
   ListNode * curr = start;
-
-  for (int i = 0; i < splitPoint || curr != NULL; i++) {
+  for (int i = 0; i < splitPoint && curr != NULL; i++) {
     curr = curr->next;
   }
-
   if (curr != NULL) {
       curr->prev->next = NULL;
       curr->prev = NULL;
+      return curr;
   }
-
   return NULL;
 }
 
@@ -121,7 +140,89 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
 template <typename T>
 void List<T>::tripleRotate() {
   // @todo Graded in MP3.1
-}
+  if(length_ < 3){
+    return;
+  }
+  ListNode* curr_past1;
+  ListNode* curr_past2;
+  ListNode* curr_past3;
+  ListNode* curr_next;
+  ListNode* curr = head_;
+  int count = 0;
+  while(count < length_){
+    if((count+1)%3==0){
+      if(count == 2){
+        curr_past1 = curr->prev;
+        curr_past2 = curr_past1 -> prev;
+        curr_next = curr -> next;
+        curr_past2 -> prev = curr;
+        curr -> next = curr_past2;
+        curr_past2->next = curr_next;
+        curr_next->prev = curr_past2;
+        curr_past1->prev = NULL;
+        head_ = curr_past1;
+        curr = curr_past2;
+      }else{
+        curr_past1 = curr->prev;
+        curr_past2 = curr_past1 -> prev;
+        curr_past3 = curr_past2 -> prev;
+        if(curr->next !=NULL){
+          curr_next = curr->next;
+          curr_past1->prev = curr_past3;
+          curr_past3->next = curr_past1;
+          curr_past2->prev = curr;
+          curr->next = curr_past2;
+          curr_past2->next = curr_next;
+          curr_next -> prev = curr_past2;
+          curr = curr_past2;
+        }else{
+          curr_past1->prev = curr_past3;
+          curr_past3->next = curr_past1;
+          curr_past2->prev = curr;
+          curr -> next = curr_past2;
+          curr_past2 -> next = NULL;
+          tail_ = curr_past2;
+          curr = curr_past2;
+        }  
+      }
+    }
+    curr = curr -> next;
+    count++;
+    }
+  }
+  /*if(length_ == 3){
+    ListNode* second = curr -> next;
+    ListNode* last = second -> next;
+    curr -> prev = last;
+    last -> next = curr;
+    second->prev = NULL;
+    curr -> next = NULL;
+    head_ = second;
+    tail_ = curr;
+    return;
+  }
+  for (int i = 0; i<length_-(length_%3)-; i++) {
+    ListNode* firstprev = curr -> prev;
+    ListNode* lastnext = curr -> next -> next -> next;
+    ListNode* second = curr -> next;
+    ListNode* last = curr -> next -> next;
+    if(i%3==0){
+      curr -> prev = last;
+      last -> next = curr;
+      curr -> next = lastnext;
+      if(i==0){
+        head_ = second;
+        lastnext -> prev = curr;
+      }else if(length_-i == 3){
+        tail_ = curr;
+        firstprev -> next = second;
+      }else{
+        firstprev -> next = second;
+        lastnext -> prev = curr;
+      }
+    } 
+    curr = curr->next;
+  }*/
 
 
 /**
