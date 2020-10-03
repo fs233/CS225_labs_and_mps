@@ -75,13 +75,26 @@ void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
  * Flips the tree over a vertical axis, modifying the tree itself
  *  (not creating a flipped copy).
  */
-    template <typename T>
+template <typename T>
 void BinaryTree<T>::mirror()
 {
+    mirror(root);
     //your code here
 }
 
-
+template <typename T>
+void BinaryTree<T>::mirror(Node* subRoot)
+{
+    if (subRoot == NULL){
+        return;
+    }
+        mirror(subRoot->left);
+        mirror(subRoot->right);
+        Node* cur_left = subRoot->left;
+        Node* cur_right = subRoot->right;
+        subRoot->left = cur_right;
+        subRoot->right = cur_left;
+}
 /**
  * isOrdered() function iterative version
  * @return True if an in-order traversal of the tree would produce a
@@ -90,9 +103,16 @@ void BinaryTree<T>::mirror()
  */
 template <typename T>
 bool BinaryTree<T>::isOrderedIterative() const
-{
+{   
     // your code here
-    return false;
+  InorderTraversal<int> traversal(root);
+  InorderTraversal<int> traversal2(root);
+  for (auto it1 = traversal.begin(), it2 = ++traversal2.begin(); it2 != traversal2.end(); ++it1, ++it2){
+        if((*it1)->elem > (*it2)->elem){
+            return false;
+        }
+    }
+    return true;
 }
 
 /**
@@ -105,6 +125,35 @@ template <typename T>
 bool BinaryTree<T>::isOrderedRecursive() const
 {
     // your code here
-    return false;
+    return isOrderedRecursive(root);
 }
-
+template <typename T>
+bool BinaryTree<T>::isOrderedRecursive(Node* node) const
+{
+  if(node == NULL){
+    return true;
+  }
+  if(node->left == NULL && node->right == NULL){
+    return true;
+  }
+  if(node->left != NULL){
+    Node * curr = node->left;
+    while(curr -> right != NULL){
+      curr = curr -> right;
+    }
+    if(curr->elem > node->elem){
+      return false;
+    }
+  }
+  if(node->right != NULL){
+    Node * curr = node->right;
+    while(curr -> left != NULL){
+      curr = curr -> left;
+    }
+    if(curr->elem < node->elem){
+      return false;
+    }
+  }
+  return isOrderedRecursive(node->left)&&isOrderedRecursive(node->right);
+  
+}

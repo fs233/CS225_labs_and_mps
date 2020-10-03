@@ -37,12 +37,6 @@ typename List<T>::ListIterator List<T>::end() const {
  */
 template <typename T>
 void List<T>::_destroy() {
-  /*ListNode* temp = head_;
-  while(temp !=NULL){
-    ListNode * nhead = temp;
-    temp = nhead->next;
-    delete nhead;
-  }*/
   while(head_ != NULL){
     ListNode* nhead = head_ ->next;
     delete head_;
@@ -247,6 +241,10 @@ void List<T>::reverse() {
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   /// @todo Graded in MP3.2
+  ListNode *& curr = startPoint->next;
+  while(curr != startPoint){
+
+  } 
 }
 
 /**
