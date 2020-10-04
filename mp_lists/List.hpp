@@ -241,10 +241,36 @@ void List<T>::reverse() {
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   /// @todo Graded in MP3.2
-  ListNode *& curr = startPoint->next;
-  while(curr != startPoint){
+  if(head_ == nullptr || tail_ == nullptr) return;
+  if(startPoint == endPoint) return;
+  ListNode* currstart = startPoint;
+  ListNode* endnext = endPoint->next;
+  ListNode* startprev = startPoint -> prev;
+  ListNode* curr = startPoint->next; 
+  ListNode* temp = NULL;
+  while(curr != endPoint){
+    temp = curr->next;
+    curr->next = curr->prev;
+    curr->prev = temp;
+    curr = temp;
+  }
+  endPoint -> next = endPoint -> prev;
+  endPoint -> prev = startprev;
+  startPoint -> prev = startPoint -> next;
+  startPoint -> next = endnext;
 
-  } 
+  if(startprev == NULL){
+    head_ = endPoint;
+  } else {
+    startprev->next = endPoint;
+  }
+  if(endnext == NULL) {
+    tail_ = startPoint;
+  } else {
+    endnext->prev = startPoint;
+  }
+  startPoint = endPoint;
+  endPoint = currstart; 
 }
 
 /**
@@ -256,6 +282,31 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
 template <typename T>
 void List<T>::reverseNth(int n) {
   /// @todo Graded in MP3.2
+  int len = this->size();
+  ListNode* cur = head_;
+  ListNode* startpoint = head_;
+  if(len%n == 0){
+    int i = 0;
+    for(cur = head_; cur != NULL ; cur=cur->next){
+      if((i+1)%n==0){
+        reverse(startpoint, cur);
+        startpoint = cur->next;
+      }
+      i++;
+    }
+  }else{
+    int i = 0;
+    for(cur = head_; cur != NULL ; cur=cur->next){
+      if((i+1)%n==0){
+        reverse(startpoint, cur);
+        startpoint = cur->next;
+      }
+      if(cur->next == NULL){
+        reverse(startpoint, cur);
+      }
+      i++;
+   }
+  }
 }
 
 
@@ -297,8 +348,50 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  return NULL;
-}
+  ListNode* first_cur = first;
+  ListNode* second_cur = second;
+  ListNode* cur = NULL;
+  ListNode* toreturn = NULL;
+  if(first == NULL && second == NULL){
+    return NULL;
+  }
+  if(first == NULL){
+    return second;
+  }
+  if(second == NULL){
+    return first;
+  }
+  if(first_cur->data < second_cur->data){
+    cur = first;
+    first_cur = first_cur->next;
+    toreturn = first;
+    }else{
+    cur = second;
+    second_cur = second_cur->next;
+    toreturn = second;
+  }
+    while(first_cur!=NULL && second_cur!=NULL){
+      if(second_cur->data < first_cur->data){
+        cur->next = second_cur;
+        second_cur->prev = cur;
+        cur = second_cur;
+        second_cur = second_cur->next;
+      }else{
+        cur->next = first_cur;
+        first_cur->prev = cur;
+        cur = first_cur;
+        first_cur = first_cur->next;
+      }
+   }
+    if(first_cur==NULL){
+      cur->next = second_cur;
+    }
+    if(second_cur==NULL){
+      cur->next = first_cur;
+    }
+    return toreturn;
+  }
+
 
 /**
  * Sorts a chain of linked memory given a start node and a size.
@@ -314,5 +407,10 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
   /// @todo Graded in MP3.2
-  return NULL;
+  if(start == NULL||start->next == NULL){
+    return start;
+  }
+  ListNode* left = start;
+  ListNode* right = split(start, chainLength / 2);
+  return merge(mergesort(left, chainLength/2), mergesort(right, chainLength-chainLength/2));
 }
