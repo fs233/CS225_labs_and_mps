@@ -12,7 +12,7 @@
 #include "ImageTraversal.h"
 #include "DFS.h"
 
-
+using namespace cs225;
 /**
  * Initializes a depth-first ImageTraversal on a given `png` image,
  * starting at `start`, and with a given `tolerance`.
@@ -24,6 +24,10 @@
  */
 DFS::DFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
+    image_ = png;
+    start_ = start;
+    tolerance_ = tolerance;
+    s.push(start_);
 }
 
 /**
@@ -31,7 +35,7 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator DFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  return ImageTraversal::Iterator(this, start_, tolerance_, image_);
 }
 
 /**
@@ -46,6 +50,7 @@ ImageTraversal::Iterator DFS::end() {
  * Adds a Point for the traversal to visit at some point in the future.
  */
 void DFS::add(const Point & point) {
+  s.push(point);
   /** @todo [Part 1] */
 }
 
@@ -54,7 +59,9 @@ void DFS::add(const Point & point) {
  */
 Point DFS::pop() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  Point top = s.top();
+  s.pop();
+  return top;
 }
 
 /**
@@ -62,7 +69,7 @@ Point DFS::pop() {
  */
 Point DFS::peek() const {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return s.top();
 }
 
 /**
@@ -70,5 +77,5 @@ Point DFS::peek() const {
  */
 bool DFS::empty() const {
   /** @todo [Part 1] */
-  return true;
+  return s.empty();
 }
