@@ -104,6 +104,7 @@ TEST_CASE("test_remove_small", "[weight=5]") {
 
     for (int i = 0; i < 4; i++) {
         tree.remove(i);
+        std::cout<<i<<std::endl;
     }
 
     vector<int> solnTraversal = {5, 8};
