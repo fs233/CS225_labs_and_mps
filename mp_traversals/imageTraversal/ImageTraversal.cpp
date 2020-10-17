@@ -34,12 +34,15 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator():t(NULL){
   /** @todo [Part 1] */
+  tolerance_ = 0;
+  //std::cout<<__LINE__<<std::endl;
 }
 
 ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point &start, double tolerance, PNG & png)
 :t(traversal), start_(start), tolerance_(tolerance), image_(png){
     current = t->peek();
-    passed.resize(image_.width()*image_.height(), false);
+    passed = std::vector<bool>(image_.width()*image_.height(), false);
+    //.resize(image_.width()*image_.height(), false);
 }
 
 
@@ -52,11 +55,8 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
 if(!t->empty()){
     HSLAPixel star = image_.getPixel(start_.x, start_.y);
-    passed[current.x+current.y*image_.width()]=true;
-  while(passed[current.x+current.y*image_.width()]==true && !t->empty()){
     current = t->pop();
-    //std::cout<<"poppedoff"<<std::endl;
-    //std::cout<<current<<std::endl;
+    passed[current.x+current.y*image_.width()]=true;
     Point right(current.x+1, current.y);
     Point below(current.x, current.y+1);
     Point left(current.x-1,current.y);
@@ -65,39 +65,34 @@ if(!t->empty()){
       HSLAPixel curr = image_.getPixel(right.x, right.y);
       if(calculateDelta(star, curr) < tolerance_){
           t->add(right);
-         //std::cout<<"right add"<<std::endl;
-         //std::cout<<right<<std::endl;
       }
     }
     if(0<=below.x && below.x<image_.width() && 0<=below.y && below.y<image_.height()  && passed[below.x+below.y*image_.width()]==false){
       HSLAPixel curr = image_.getPixel(below.x, below.y);
       if(calculateDelta(star, curr) < tolerance_){
           t->add(below);
-          //std::cout<<"below add"<<std::endl;
-          //std::cout<<below<<std::endl;
       }
     }
     if(0<=left.x && left.x<image_.width() && 0<=left.y && left.y<image_.height() && passed[left.x+left.y*image_.width()]==false){
       HSLAPixel curr = image_.getPixel(left.x, left.y);
       if(calculateDelta(star, curr) < tolerance_){
           t->add(left);
-          //std::cout<<"left add"<<std::endl;
-          //std::cout<<left<<std::endl;
       }
     }
     if(0<=above.x && above.x<image_.width() && 0<=above.y && above.y<image_.height() && passed[above.x+above.y*image_.width()]==false){
       HSLAPixel curr = image_.getPixel(above.x, above.y);
       if(calculateDelta(star, curr) < tolerance_){
           t->add(above);
-          //std::cout<<"above add"<<std::endl;
-         //std::cout<<above<<std::endl;
       }
     }
-    if(!t->empty()){
-      current = t->peek();
+    current = t->peek();
+    while(!t->empty() && passed[current.x+current.y*image_.width()] ){
+      t->pop();
+      if(!t->empty()){
+        current = t->peek();
+      }
     }
-  }
-}   //std::cout<<"current: "<<current<<std::endl;
+} 
     return *this;
 }
     

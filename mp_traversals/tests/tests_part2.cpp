@@ -57,7 +57,7 @@ TEST_CASE("Illini I - FloodFilledImage - BFS", "[weight=3][part=2]") {
   BFS bfs(png, Point(40, 40), 0.05);
   RainbowColorPicker rainbow(0.05);
   image.addFloodFill( bfs, rainbow );
-
+  std::cout<<"done with flood"<<std::endl;
   Animation animation = image.animate(1000);
 
   REQUIRE( animation.frameCount() > 2 );

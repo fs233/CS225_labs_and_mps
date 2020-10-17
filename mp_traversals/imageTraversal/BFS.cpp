@@ -24,9 +24,11 @@ using namespace cs225;
  */
 BFS::BFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
+    
     image_ = png;
     start_ = start;
     tolerance_ = tolerance;
+    //Iterator(this, start_, tolerance_, image_);
     q.push(start_);
 }
 
@@ -62,6 +64,7 @@ Point BFS::pop() {
   Point top = q.front();
   q.pop();
   return top;
+
 }
 
 /**
