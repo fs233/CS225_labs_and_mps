@@ -30,7 +30,7 @@ void AVLTree<K, V>::rotateLeft(Node*& t)
 { 
     functionCalls.push_back("rotateLeft"); // Stores the rotation name (don't remove this)
     // your code here
-    Node* mid = t->right;
+    Node*& mid = t->right;
     t->right = mid->left;
     mid->left = t;
     t = mid; 

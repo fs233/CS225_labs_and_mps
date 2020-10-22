@@ -339,11 +339,28 @@ class BTree
  * the index of val in elements.
  */
 template <class T, class C>
+size_t binary(const std::vector<T>& elements, const C& val, int start, int end){
+    if(start>=end){
+        return start;
+    }
+    int mid = (start+end)/2;
+    if(val==elements[mid]){
+        return mid;
+    }
+    if(val<elements[mid]){
+        return binary(elements, val, start, mid);
+    }
+    if(val>elements[mid]){
+        return binary(elements, val, mid+1, end);
+    }
+    return 0;
+}
+
+template <class T, class C>
 size_t insertion_idx(const std::vector<T>& elements, const C& val)
 {
     /* TODO Your code goes here! */
-
-    return 5;
+    return binary(elements, val, 0, elements.size());
 }
 
 #include "btree_given.cpp"

@@ -22,9 +22,9 @@ int main() {
   //   submit Part 3 of this assignment -- uncomment it when you're ready.
   PNG png;      png.readFromFile("tests/i.png");
   FloodFilledImage image(png);
-  BFS bfs(png, Point(40, 40), 0.2);
+  BFS bfs(png, Point(60,60), 0.1);
   MyColorPicker color1(216);
-  DFS dfs(png, Point(40, 40), 0.5);
+  DFS dfs(png, Point(40, 40), 0.05);
   MyColorPicker color2(45);
   image.addFloodFill( bfs, color1 );
   image.addFloodFill( dfs, color2 );
