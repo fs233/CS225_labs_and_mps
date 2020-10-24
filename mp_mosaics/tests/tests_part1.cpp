@@ -108,6 +108,7 @@ TEST_CASE("KDTree::shouldReplace Tests", "[weight=1][part=1]") {
 // }
 
 TEST_CASE("KDTree constructor, 1D (Dim=1)", "[weight=1][part=1]") {
+  cout<<"testing ctor"<<endl;
   _test_linear_constructor<1>(10);
 }
 
