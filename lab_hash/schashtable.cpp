@@ -54,6 +54,13 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      * @todo Implement this function.
      *
      */
+    std::pair<K, V> toInsert(key, value);
+    size_t idx = hashes::hash(key, size);
+    table[idx].push_front(toInsert);
+    elems++;
+     if (shouldResize())
+        resizeTable();
+
 }
 
 template <class K, class V>
@@ -66,7 +73,15 @@ void SCHashTable<K, V>::remove(K const& key)
      * Please read the note in the lab spec about list iterators and the
      * erase() function on std::list!
      */
-    (void) key; // prevent warnings... When you implement this function, remove this line.
+    size_t idx = hashes::hash(key, size);
+    for (it = table[idx].begin(); it != table[idx].end(); it++) {
+        if (it->first == key){
+            table[idx].erase(it);
+            elems--;
+            break;
+        }
+    }
+    //(void) key; // prevent warnings... When you implement this function, remove this line.
 }
 
 template <class K, class V>
@@ -76,7 +91,13 @@ V SCHashTable<K, V>::find(K const& key) const
     /**
      * @todo: Implement this function.
      */
-
+    size_t idx = hashes::hash(key, size);
+    typename std::list<std::pair<K, V>>::iterator it;
+    for (it = table[idx].begin(); it != table[idx].end(); it++) {
+        if (it->first == key){
+            return it->second;
+        }
+    }
     return V();
 }
 
@@ -125,7 +146,7 @@ void SCHashTable<K, V>::clear()
 template <class K, class V>
 void SCHashTable<K, V>::resizeTable()
 {
-    typename std::list<std::pair<K, V>>::iterator it;
+    //typename std::list<std::pair<K, V>>::iterator it;
     /**
      * @todo Implement this function.
      *
@@ -134,4 +155,15 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+    size_t newSize = findPrime(size*2);
+    std::list<std::pair<K, V>>* newTable = new std::list<std::pair<K, V>>[newSize];
+    for (auto it = begin(); it != end(); it++) {
+        size_t idx = hashes::hash(it->first, newSize);
+        std::pair<K, V> cur(it->first, it->second);
+        newTable[idx].push_front(cur);
+    }
+    delete[] table;
+    table = NULL;
+    size = newSize;
+    table = newTable;
 }

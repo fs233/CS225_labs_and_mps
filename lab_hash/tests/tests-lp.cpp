@@ -71,12 +71,14 @@ TEST_CASE("LP::testResizeOnce", "[valgrind][weight=7]" )
 			hashTable.insert(word, val);
         }
 	}
+	std::cout<<"TTTTTTW"<<__LINE__<<std::endl;
 	REQUIRE(hashTable.tableSize() >= val / 0.7);
 	if( hashTable.find("got") != 2 )
 		FAIL("Didn't copy over existing lists properly on resize");
+	std::cout<<"TTTTTTW"<<__LINE__<<std::endl;	
 	if( hashTable.find("to") != 3 )
 		FAIL("Didn't re-hash keys properly");
-
+	std::cout<<"TTTTTTW"<<__LINE__<<std::endl;
     REQUIRE(true);
 }
 
@@ -88,7 +90,6 @@ TEST_CASE("LP::testResizeAll", "[valgrind][weight=11]")
 		word += ((char)i);
 		strings.push_back(word);
 	}
-    //cout << strings.size() << endl;
 	LPHashTable<string, int> hashTable(16);
 	int val = 0;
 	for(unsigned int i = 0; i < strings.size(); i++) {
@@ -117,8 +118,10 @@ TEST_CASE("LP::testInsertEasy", "[valgrind][weight=6]")
 		string word = infile.getNextWord();
 		hashTable.insert(word, val);
 	}
+	std::cout<<__LINE__<<std::endl;
 	if( !hashTable.keyExists("all") )
 		FAIL("Did not insert key: 'all'");
+		std::cout<<__LINE__<<std::endl;
 	if( !hashTable.keyExists("base") )
 		FAIL("Did not insert key: 'base'");
 	if( hashTable.find("are") != 4 )
