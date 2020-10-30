@@ -21,7 +21,27 @@ MosaicCanvas* mapTiles(SourceImage const& theSource,
     /**
      * @todo Implement this function!
      */
-
-    return NULL;
+    std::map<Point<3>, TileImage*> find;
+    std::vector<Point<3>> points;
+    for(unsigned i = 0; i<theTiles.size(); i++){
+        LUVAPixel curr = theTiles[i].getAverageColor();
+        Point<3> point = convertToXYZ(curr);
+        points.push_back(point);
+        find[point] = &theTiles[i];
+    }
+    KDTree<3> tree(points);
+    int rows = theSource.getRows();
+    int cols  = theSource.getColumns();
+    MosaicCanvas* canvas = new MosaicCanvas(rows, cols);
+    for(int i = 0; i < rows; i++){
+        for(int j =0; j<cols; j++){
+            LUVAPixel source = theSource.getRegionColor(i, j);
+            Point<3> source_point = convertToXYZ(source);
+            Point<3> match_point = tree.findNearestNeighbor(source_point);
+            TileImage* img = find[match_point];
+            canvas->setTile(i, j, img);
+        }
+    }
+    return canvas;
 }
 

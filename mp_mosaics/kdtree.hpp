@@ -206,11 +206,12 @@ Point<Dim> KDTree<Dim>::findNearest(const Point<Dim>& query, int dimension, KDTr
   if(shouldReplace(query, nearest, next)){
     nearest = next;
   }
-  int rad = 0;
+  double rad = 0;
   for(int i = 0; i<Dim; i++){
-    rad += pow(query[i]-nearest[i], 2);
+    rad += pow(query[i]-nearest[i], 2.0);
   } 
-  if(rad>=pow(query[dimension]-next[dimension],2)){
+  double square_dist = pow(query[dimension]-next[dimension],2.0);
+  if(rad>=square_dist){
     if(leftChecked){
       if(curRoot->right != NULL){
         tempNearest = findNearest(query, (dimension+1)%Dim, curRoot->right);
