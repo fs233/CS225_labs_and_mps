@@ -21,8 +21,9 @@ void helpTestHeapifyDown(const vector<V> & vals)
     vector<V> sorted = vals;
     sort(sorted.begin(), sorted.end());
 
-    for(size_t i = 0; i < sorted.size(); i++)
+    for(size_t i = 0; i < sorted.size(); i++){
         REQUIRE(sorted[i] == _heap.pop());
+    }
 }
 
 void helpTestUpdateElem(vector<int> vals)
