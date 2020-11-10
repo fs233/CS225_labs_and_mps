@@ -14,7 +14,7 @@ SquareMaze::SquareMaze(){
 }
 void SquareMaze::makeMaze(int width, int height){
    
-    _height = height;
+    /*_height = height;
     _width = width;
     set->addelements(width*height);
     vector<int> possible_direction;
@@ -55,7 +55,7 @@ void SquareMaze::makeMaze(int width, int height){
             set->setunion(i, i+_width);
             maze[i]->_down = true;
         }
-    }
+    }*/
 }
 
 
@@ -78,7 +78,7 @@ vector<int> SquareMaze::solveMaze(){
 
 
 PNG* SquareMaze::drawMaze()const{
-    PNG* maze_canvas = new PNG(_width*10+1, _height*10+1);
+    /*PNG* maze_canvas = new PNG(_width*10+1, _height*10+1);
     for(int i = 0; i<(_width*10+1); i++){
         HSLAPixel &pixel = maze_canvas->getPixel(0, i);
         pixel.l = 0;
@@ -102,15 +102,15 @@ PNG* SquareMaze::drawMaze()const{
                 }
             }
         }
-    }
-    return maze_canvas;
+    }*/
+    return NULL;
 }
 
 
 
 
 PNG* SquareMaze::drawMazeWithSolution(){
-    PNG* final_maze = new PNG(_width, _height);
-    return final_maze;
+    //PNG* final_maze = new PNG(_width, _height);
+    return NULL;
 }
 
