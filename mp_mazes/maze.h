@@ -21,6 +21,9 @@ class SquareMaze{
         PNG* drawMazeWithSolution();
         int _height;
         int _width;
+        
+        DisjointSets* set;
+        
         class Cell{
             public:
             Cell(bool right, bool down){
@@ -31,6 +34,5 @@ class SquareMaze{
                 bool _down; 
         };
         vector<Cell*> maze;
-        DisjointSets* set;
         
 };

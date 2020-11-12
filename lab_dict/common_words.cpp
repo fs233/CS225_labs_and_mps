@@ -48,12 +48,32 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
         // file
         vector<string> words = file_to_vector(filenames[i]);
         /* Your code goes here! */
+        map<string, unsigned int> file_map = {};
+        for(size_t j = 0; j<words.size(); j++){
+            auto lookup = file_map.find(words[j]);
+            if(lookup != file_map.end()){
+                lookup->second++;
+            }else{
+                file_map[words[j]] = 1;
+            }
+        }
+        file_word_maps[i] = file_map;
     }
 }
 
 void CommonWords::init_common()
 {
     /* Your code goes here! */
+    for(size_t i = 0; i<file_word_maps.size(); i++){
+        for(auto iter_file: file_word_maps[i]){
+            auto lookup = common.find(iter_file.first);
+            if(lookup != common.end()){
+                lookup->second++;
+            }else{
+                common[iter_file.first] = 1;
+            }
+        }
+    }
 }
 
 /**
@@ -65,6 +85,22 @@ vector<string> CommonWords::get_common_words(unsigned int n) const
 {
     vector<string> out;
     /* Your code goes here! */
+    for(size_t i = 0; i<file_word_maps.size(); i++){
+         for(auto iter_file: file_word_maps[i]){
+            if(common.at(iter_file.first)==file_word_maps.size() && iter_file.second >= n && std::find(out.begin(), out.end(), iter_file.first)==out.end()){
+                bool toadd = true;
+                for(auto cur_map: file_word_maps){
+                    if(cur_map[iter_file.first]<n){
+                        toadd = false;
+                        break;
+                    }
+                }
+                if(toadd){
+                    out.push_back(iter_file.first);
+                }
+            }
+        }
+    }
     return out;
 }
 
