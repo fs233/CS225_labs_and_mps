@@ -6,6 +6,7 @@
 #include "dsets.h"
 #include <vector>
 #include <iostream>
+#include <queue>
 
 using namespace std;
 using namespace cs225;
@@ -17,6 +18,8 @@ class SquareMaze{
         bool canTravel(int x, int y, int dir)const;
         void setWall(int x, int y, int dir, bool exists);
         vector<int> solveMaze();
+        int getx(int input);
+        int gety(int input);
         PNG* drawMaze()const;
         PNG* drawMazeWithSolution();
         int _height;
@@ -33,6 +36,6 @@ class SquareMaze{
                 bool _right;
                 bool _down; 
         };
-        vector<Cell*> maze;
+        vector<Cell> maze;
         
 };
