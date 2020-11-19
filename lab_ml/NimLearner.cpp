@@ -26,6 +26,26 @@
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
     /* Your code goes here! */
+    startingVertex_ = "p1-"+to_string(startingTokens);
+    for(int i = startingTokens; i>=0; i--){
+      g_.insertVertex("p1-"+to_string(i));
+      g_.insertVertex("p2-"+to_string(i));
+    }
+    for(int i = startingTokens; i>=0; i--){
+      if(i-2>=0){
+        g_.insertEdge("p1-"+to_string(i), "p2-"+to_string(i-2));
+        g_.setEdgeWeight("p1-"+to_string(i), "p2-"+to_string(i-2), 0);
+        g_.insertEdge("p2-"+to_string(i), "p1-"+to_string(i-2));
+        g_.setEdgeWeight("p2-"+to_string(i), "p1-"+to_string(i-2), 0);
+      }
+      if(i-1>=0){
+        g_.insertEdge("p1-"+to_string(i), "p2-"+to_string(i-1));
+        g_.setEdgeWeight("p1-"+to_string(i), "p2-"+to_string(i-1), 0);
+        g_.insertEdge("p2-"+to_string(i), "p1-"+to_string(i-1));
+        g_.setEdgeWeight("p2-"+to_string(i), "p1-"+to_string(i-1), 0);
+      }
+      
+    }
 }
 
 /**
@@ -40,6 +60,20 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
  /* Your code goes here! */
+ Vertex curr = startingVertex_;
+ while(curr != "p1-0" && curr != "p2-0"){
+   int choice = rand()%2;
+   vector<Vertex> next_vers = g_.getAdjacent(curr);
+   if(choice==0){
+    Vertex next = next_vers[0];
+    path.push_back(Edge(curr, next));
+    curr = next;
+   }else{
+    Vertex next = next_vers.back();
+    path.push_back(Edge(curr, next));
+    curr = next;
+   }
+ }
   return path;
 }
 
@@ -61,6 +95,25 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
  /* Your code goes here! */
+ if(path.back().dest=="p2-0"){
+   for(Edge e : path){
+     int weight = g_.getEdgeWeight(e.source, e.dest);
+     if(e.source[1]=='1'){
+       g_.setEdgeWeight(e.source, e.dest, weight+1);
+     }else{
+       g_.setEdgeWeight(e.source, e.dest, weight-1);
+     }
+   }
+ }else{
+   for(Edge e : path){
+     int weight = g_.getEdgeWeight(e.source, e.dest);
+     if(e.source[1]=='2'){
+       g_.setEdgeWeight(e.source, e.dest, weight+1);
+     }else{
+       g_.setEdgeWeight(e.source, e.dest, weight-1);
+     }
+   }
+ }
 }
 
 /**
