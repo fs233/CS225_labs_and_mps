@@ -20,8 +20,22 @@ int min(int a, int b) {
 
 NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
   g_(startingGraph), residual_(Graph(true,true)), flow_(Graph(true,true)), source_(source), sink_(sink) {
+  vector<Vertex> graph_v = g_.getVertices();
+  for(unsigned i = 0; i<graph_v.size(); i++){
+    residual_.insertVertex(graph_v[i]);
+    flow_.insertVertex(graph_v[i]);
+  }
+  
+  for(Edge e : g_.getEdges()){
+		residual_.insertEdge(e.source, e.dest);
+		residual_.setEdgeWeight(e.source, e.dest, g_.getEdgeWeight(e.source, e.dest));
+		residual_.insertEdge(e.dest, e.source);
+		residual_.setEdgeWeight(e.dest, e.source, 0);
+		flow_.insertEdge(e.source, e.dest);
+		flow_.setEdgeWeight(e.source, e.dest, 0);
+	}
 
-  // YOUR CODE HERE
+  
 }
 
   /**
@@ -84,7 +98,15 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Ver
 
 int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
   // YOUR CODE HERE
-  return 0;
+  if(path.size()<=1){
+    return 0;
+  }
+  int min_weight = residual_.getEdgeWeight(path[0], path[1]);
+  for(unsigned i = 1; i<path.size()-1; i++){
+    int cur_weight = residual_.getEdgeWeight(path[i], path[i+1]);
+    if(cur_weight<min_weight) min_weight = cur_weight;
+  }
+  return min_weight;
 }
 
   /**
@@ -97,6 +119,27 @@ int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
 
 const Graph & NetworkFlow::calculateFlow() {
   // YOUR CODE HERE
+  std::vector<Vertex> path;
+  while(findAugmentingPath(source_, sink_, path))
+  {
+    int capacity = pathCapacity(path);
+    for(unsigned i = 0; i<path.size()-1; i++)
+    {
+      if(flow_.edgeExists(path[i], path[i+1])){
+        flow_.setEdgeWeight(path[i], path[i+1], flow_.getEdgeWeight(path[i], path[i+1])+capacity);
+      }else{
+        flow_.setEdgeWeight(path[i+1], path[i], flow_.getEdgeWeight(path[i+1], path[i])-capacity);
+      }
+      residual_.setEdgeWeight(path[i], path[i+1], residual_.getEdgeWeight(path[i], path[i+1])-capacity);
+      residual_.setEdgeWeight(path[i+1], path[i], residual_.getEdgeWeight(path[i+1], path[i])+capacity);
+    }
+  }
+  vector<Vertex> adjs = flow_.getAdjacent(source_);
+  int mflow = 0;
+  for(unsigned i = 0; i<adjs.size(); i++){
+    mflow+=flow_.getEdgeWeight(source_, adjs[i]);
+  }
+  maxFlow_ = mflow;
   return flow_;
 }
 
